@@ -50,6 +50,10 @@ public:
 	{
 		return find(key) != keys.size();
 	}
+	size_t size() const
+	{
+		return keys.size();
+	}
 private:
 	size_t find(const Key& key) const
 	{
