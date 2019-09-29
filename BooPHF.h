@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <math.h>
+#include <thread>
 
 #include <array>
 #include <unordered_map>
@@ -1240,6 +1241,7 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 			pthread_mutex_init(&_mutex, NULL);
 
 			_pid = getpid() + printPt(pthread_self()) ;// + pthread_self();
+			_tid = std::hash<std::thread::id>{}(std::this_thread::get_id());
 			//printf("pt self %llu  pid %i \n",printPt(pthread_self()),_pid);
 
 			_cptTotalProcessed=0;
@@ -1358,13 +1360,13 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 			//printf("---process level %i   wr %i fast %i ---\n",i,_writeEachLevel,_fastmode);
 			
 			char fname_old[1000];
-			sprintf(fname_old,"/dev/shm/temp_p%i_level_%i",_pid,i-2);
+			sprintf(fname_old,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i-2);
 			
 			char fname_curr[1000];
-			sprintf(fname_curr,"/dev/shm/temp_p%i_level_%i",_pid,i);
+			sprintf(fname_curr,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i);
 			
 			char fname_prev[1000];
-			sprintf(fname_prev,"/dev/shm/temp_p%i_level_%i",_pid,i-1);
+			sprintf(fname_prev,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i-1);
 			
 			if(_writeEachLevel)
 			{
@@ -1513,6 +1515,7 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 		bool _writeEachLevel;
 		FILE * _currlevelFile;
 		int _pid;
+		int _tid;
 	public:
 		pthread_mutex_t _mutex;
 	};
