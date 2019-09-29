@@ -12,10 +12,14 @@ class ParallelBB
 	typedef boomphf::SingleHashFunctor<Key> hasher_t;
 	typedef boomphf::mphf<Key, hasher_t> boophf_t;
 public:
-	ParallelBB(size_t numThreads, const std::vector<Key>& keys) :
-		numThreads(numThreads),
-		buckets()
+	ParallelBB() {}
+	ParallelBB(size_t numThreads, const std::vector<Key>& keys)
 	{
+		build(numThreads, keys);
+	}
+	void build(size_t _numThreads, const std::vector<Key>& keys)
+	{
+		numThreads = _numThreads;
 		if (numThreads == 1)
 		{
 			bucketOffset.resize(2);
@@ -73,7 +77,7 @@ private:
 	{
 		return key % numThreads;
 	}
-	const size_t numThreads;
+	size_t numThreads;
 	std::vector<boophf_t*> buckets;
 	std::vector<size_t> bucketOffset;
 };

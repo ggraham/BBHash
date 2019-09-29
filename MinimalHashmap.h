@@ -5,10 +5,15 @@ template <typename Key, typename Value>
 class MinimalHashmap
 {
 public:
-	MinimalHashmap(const std::vector<Key>& inkeys, const std::vector<Value>& invalues, size_t numThreads) :
-		locator(numThreads, inkeys)
+	MinimalHashmap() {}
+	MinimalHashmap(const std::vector<Key>& inkeys, const std::vector<Value>& invalues, size_t numThreads)
+	{
+		build(inkeys, invalues, numThreads);
+	}
+	void build(const std::vector<Key>& inkeys, const std::vector<Value>& invalues, size_t numThreads)
 	{
 		assert(inkeys.size() == invalues.size());
+		locator.build(numThreads, inkeys);
 		keys.resize(inkeys.size());
 		values.resize(inkeys.size());
 		std::vector<std::thread> splitterThreads;
