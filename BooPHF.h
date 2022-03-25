@@ -9,6 +9,7 @@
 #include <iostream>
 #include <math.h>
 #include <thread>
+#include <filesystem>
 
 #include <array>
 #include <unordered_map>
@@ -876,6 +877,8 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 		_gamma(gamma), _hash_domain(size_t(ceil(double(n) * gamma))), _nelem(n), _num_thread(num_thread), _percent_elem_loaded_for_fastMode (perc_elem_loaded), _withprogress(progress)
 		{
 			if(n ==0) return;
+
+			if (std::filesystem::exists(_sharedMemoryFolder)) _folder = _sharedMemoryFolder;
 			
 			_fastmode = false;
 			
@@ -1360,13 +1363,13 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 			//printf("---process level %i   wr %i fast %i ---\n",i,_writeEachLevel,_fastmode);
 			
 			char fname_old[1000];
-			sprintf(fname_old,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i-2);
+			sprintf(fname_old,"%s/temp_p%i_t%i_level_%i",_folder,_pid,_tid,i-2);
 			
 			char fname_curr[1000];
-			sprintf(fname_curr,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i);
+			sprintf(fname_curr,"%s/temp_p%i_t%i_level_%i",_folder,_pid,_tid,i);
 			
 			char fname_prev[1000];
-			sprintf(fname_prev,"/dev/shm/temp_p%i_t%i_level_%i",_pid,_tid,i-1);
+			sprintf(fname_prev,"%s/temp_p%i_t%i_level_%i",_folder,_pid,_tid,i-1);
 			
 			if(_writeEachLevel)
 			{
@@ -1486,6 +1489,9 @@ we need this 2-functors scheme because HashFunctors won't work with unordered_ma
 		int _nb_levels;
         MultiHasher_t _hasher;
 		bitVector * _tempBitset;
+		const char* _sharedMemoryFolder = "/dev/shm";
+		const char* _temporaryFolder = "/tmp";
+		const char* _folder = _temporaryFolder;
 
 		double _gamma;
 		uint64_t _hash_domain;
